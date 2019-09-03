@@ -1,0 +1,65 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/fire?autoReconnect=true&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+  application:
+    name: fire-server
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+  redis:
+    host: localhost
+    database: 0
+    port: 6379
+    password:
+    timeout: 10s
+  rocketmq:
+    namesrvAddr: localhost:9876
+server:
+  port: 8888
+  workerId: 0
+  dataCenterId: 0
+eureka:
+  client:
+    service-url:
+     defaultZone: http://localhost:8761/eureka/
+
+#整合Mybatis
+mybatis:
+#  扫描数据持久对应的实体类 路径 Package级别
+  type-aliases-package: com.dmsoft.fire.entity
+#  mybatis 对应的 .xml文件路径
+  mapper-locations: classpath:mapper/*.xml
+#  多层级目录  mapper-locations: classpath:mapper/**/**.xml
+
+#boss和work线程数
+netty:
+  boss:
+    count: 5
+  work:
+    count: 10
+
+#tcp监听端口
+tcp:
+  port: 8777
+
+#是否使用长连接
+socket:
+  keepAlive: false
+  backlog: 1024
+
+threadPool:
+  corePoolSize: 5
+  maximumPoolSize: 8
+  keepAliveTime: 60
+  queueSize: 5
+
+dm:
+  log:
+    app-name: plugin-fire
