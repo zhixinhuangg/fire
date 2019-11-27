@@ -24,8 +24,6 @@ public class FireApplication {
         SpringApplication.run(FireApplication.class, args);
 
         //
-
-
         //
 
 
