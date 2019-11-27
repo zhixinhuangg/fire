@@ -30,7 +30,6 @@ public class ExecutorConfig {
     @Bean
     public Executor asyncServiceExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        Executors.newCachedThreadPool();
         executor.setCorePoolSize(corePoolSize);
         executor.setMaxPoolSize(maximumPoolSize);
         executor.setKeepAliveSeconds(keepAliveTime);
