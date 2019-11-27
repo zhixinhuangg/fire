@@ -24,7 +24,7 @@ public class FireApplication {
         SpringApplication.run(FireApplication.class, args);
 
         //
-        //
+        //masterTest1修改了
 
 
     }
