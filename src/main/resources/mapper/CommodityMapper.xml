@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dmsoft.fire.mapper.CommodityMapper">
+    <resultMap id="BaseResultMap" type="com.dmsoft.fire.entity.Commodity">
+        <result column="id" jdbcType="BIGINT" property="id" />
+        <result column="commodity_no" jdbcType="VARCHAR" property="commodityNo" />
+        <result column="commodity_name" jdbcType="VARCHAR" property="commodityName" />
+        <result column="commodity_type" jdbcType="VARCHAR" property="commodityType" />
+        <result column="commodity_price" jdbcType="VARCHAR" property="commodityPrice" />
+        <result column="commodity_desc" jdbcType="VARCHAR" property="commodityDesc" />
+    </resultMap>
+</mapper>
