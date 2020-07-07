@@ -12,6 +12,7 @@ public interface CommodityService {
      * 保存商品
      *
      * @param commodityDto 商品信息
+     * @return commodityDto
      */
     CommodityDto saveCommodity(CommodityDto commodityDto);
 
@@ -19,6 +20,7 @@ public interface CommodityService {
      * 更新商品
      *
      * @param commodityDto 商品信息
+     * @return commodityDto
      */
     CommodityDto updateCommodity(CommodityDto commodityDto);
 

@@ -119,20 +119,6 @@ public class RedisConfig extends CachingConfigurerSupport {
         return redisCacheConfiguration;
     }
 
-//    @Bean
-//    public KeyGenerator wiselyKeyGenerator() {
-//        return (target, method, params) -> {
-//            String join = "";
-//            try {
-//                join = String.join("&", Arrays.stream(params).cache(Object::toString).collect(Collectors.toList()));
-//                System.out.println("缓存key：" + target.getClass().getName() + "." + method.getName());
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            return String.format("%s{%s}", target.getClass().getName() + "." + method.getName(), join);
-//        };
-//    }
-
     @Bean
     public KeyGenerator wiselyKeyGenerator() {
         return (target, method, params) -> {
