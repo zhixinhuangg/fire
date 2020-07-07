@@ -1,20 +1,21 @@
 package com.dmsoft.fire.service.impl;
 
-import com.dmsoft.fire.dao.CommodityDao;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.dmsoft.fire.dto.CommodityDto;
 import com.dmsoft.fire.entity.Commodity;
+import com.dmsoft.fire.mapper.CommodityMapper;
 import com.dmsoft.fire.openapi.exception.BusinessException;
 import com.dmsoft.fire.service.CommodityService;
 import com.dmsoft.fire.util.SnowflakeComponent;
+import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cglib.beans.BeanCopier;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Objects;
 
 /**
  * @author zhixin.huang
@@ -24,61 +25,57 @@ import javax.annotation.Resource;
 public class CommodityServiceImpl implements CommodityService {
 
     @Resource
-    private CommodityDao commodityDao;
+    private CommodityMapper commodityMapper;
 
     @Resource
     private SnowflakeComponent snowflakeComponent;
 
-    private BeanCopier toCommodity = BeanCopier.create(CommodityDto.class, Commodity.class, false);
-    private BeanCopier toCommodityDto = BeanCopier.create(Commodity.class, CommodityDto.class, false);
-
     @Override
-    @Cacheable(value = "commodity", key = "#commodityDto.commodityNo")
-    public void saveCommodity(CommodityDto commodityDto) {
-        //实例化实体类
-        Commodity commodity = new Commodity();
-        //使用spring自带的cglib的BeanCopier方法（效率更高，效率测试代码：com.dmsoft.fire.util.BeanCopyTest）
-        toCommodity.copy(commodityDto, commodity, null);
-
-        commodity.setCommodityNo(snowflakeComponent.getSnowflakeIdWorker().nextId());
-
+    public CommodityDto saveCommodity(CommodityDto commodityDto) {
         //向数据库持久化
-        commodityDao.save(commodity);
+        Commodity commodity = new Commodity()
+                .setCommodityName(commodityDto.getCommodityName())
+                .setCommodityType(commodityDto.getCommodityType())
+                .setCommodityPrice(commodityDto.getCommodityPrice())
+                .setCommodityDesc(commodityDto.getCommodityDesc())
+                .setCommodityNo(snowflakeComponent.getSnowflakeIdWorker().nextId());
+        commodityMapper.insert(commodity);
+        commodityDto.setCommodityNo(commodity.getCommodityNo());
+        return commodityDto;
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    @CachePut(value = "commodity", key = "#commodityDto.commodityNo")
-    public void updateCommodity(CommodityDto commodityDto) {
-        try {
-            Commodity commodity = commodityDao.findByCommodityNo(commodityDto.getCommodityNo());
-            toCommodity.copy(commodityDto, commodity, null);
-            commodityDao.save(commodity);
-        } catch (NullPointerException e) {
+    @CachePut(value = "commodityDto", key = "#commodityDto.commodityNo")
+    public CommodityDto updateCommodity(CommodityDto commodityDto) {
+        Commodity commodity = commodityMapper.selectOne(new QueryWrapper<Commodity>()
+                .eq("commodity_no", commodityDto.getCommodityNo()));
+        if (Objects.isNull(commodity)) {
             throw new BusinessException(500, "该记录不存在！");
         }
+        // 使用beanUtils（慎用）
+        BeanUtils.copyProperties(commodityDto, commodity);
+        commodityMapper.update(commodity, new QueryWrapper<Commodity>()
+                .eq("commodity_no", commodityDto.getCommodityNo()));
+        return commodityDto;
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(value = "commodity", key = "#commodityNo")
+    @CacheEvict(value = "commodityDto", key = "#commodityNo")
     public void deleteCommodityByCommodityNo(String commodityNo) {
-        try {
-            commodityDao.deleteByCommodityNo(commodityNo);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new BusinessException(500, "删除操作失败！");
-        }
+        commodityMapper.delete(new QueryWrapper<Commodity>()
+                .eq("commodity_no", commodityNo));
     }
 
     @Override
-    @Cacheable(keyGenerator = "wiselyKeyGenerator",value = "commodity")
+    @Cacheable(value = "commodityDto", key = "#commodityNo")
     public CommodityDto findCommodityByCommodityNo(String commodityNo) {
         CommodityDto commodityDto = new CommodityDto();
-        Commodity commodity = commodityDao.findByCommodityNo(commodityNo);
-        if (commodity != null) {
-            toCommodityDto.copy(commodity, commodityDto, null);
+        Commodity commodity = commodityMapper.selectOne(new QueryWrapper<Commodity>()
+                .eq("commodity_no", commodityNo));
+        if (Objects.isNull(commodity)) {
+            throw new BusinessException(500, "该记录不存在！");
         }
+        BeanUtils.copyProperties(commodity, commodityDto);
         return commodityDto;
     }
 }

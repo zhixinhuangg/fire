@@ -6,13 +6,6 @@ spring:
     password: 123456
   application:
     name: fire-server
-  flyway:
-    enabled: false
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    open-in-view: false
   redis:
     host: localhost
     database: 0
@@ -30,13 +23,11 @@ eureka:
     service-url:
      defaultZone: http://localhost:8761/eureka/
 
-#整合Mybatis
-mybatis:
-#  扫描数据持久对应的实体类 路径 Package级别
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*.xml
   type-aliases-package: com.dmsoft.fire.entity
-#  mybatis 对应的 .xml文件路径
-  mapper-locations: classpath:mapper/*.xml
-#  多层级目录  mapper-locations: classpath:mapper/**/**.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 #boss和work线程数
 netty:

@@ -13,14 +13,14 @@ public interface CommodityService {
      *
      * @param commodityDto 商品信息
      */
-    void saveCommodity(CommodityDto commodityDto);
+    CommodityDto saveCommodity(CommodityDto commodityDto);
 
     /**
      * 更新商品
      *
      * @param commodityDto 商品信息
      */
-    void updateCommodity(CommodityDto commodityDto);
+    CommodityDto updateCommodity(CommodityDto commodityDto);
 
     /**
      * 删除商品

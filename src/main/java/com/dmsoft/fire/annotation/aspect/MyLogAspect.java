@@ -1,7 +1,9 @@
 package com.dmsoft.fire.annotation.aspect;
 
-import com.alibaba.druid.support.json.JSONUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.dmsoft.fire.annotation.MyLog;
+import com.dmsoft.fire.entity.SysLog;
+import com.dmsoft.fire.mapper.SysLogMapper;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
@@ -25,6 +28,9 @@ import java.lang.reflect.Method;
 public class MyLogAspect {
 
     private static Logger logger = LoggerFactory.getLogger(MyLogAspect.class);
+
+    @Resource
+    private SysLogMapper sysLogMapper;
 
     @Pointcut("@annotation(com.dmsoft.fire.annotation.MyLog)")
     public void annotationPointcut() {
@@ -39,7 +45,7 @@ public class MyLogAspect {
         Object[] args = joinPoint.getArgs();
         StringBuilder stringBuilder = new StringBuilder();
         for (Object object : args) {
-            stringBuilder.append(JSONUtils.toJSONString(object));
+            stringBuilder.append(JSONObject.toJSONString(object));
         }
         Method method = signature.getMethod();
         method.setAccessible(true);
@@ -52,8 +58,11 @@ public class MyLogAspect {
         }
         logger.info(value + "-请求IP:[{}]，请求URL:[{}]，请求参数:[{}]", remoteAddr, requestURI, stringBuilder.toString());
 
-        if(write) {
-
+        if (write) {
+            sysLogMapper.insert(new SysLog()
+                    .setIp(remoteAddr)
+                    .setUrl(requestURI)
+                    .setContent(stringBuilder.toString()));
         }
 
         return joinPoint.proceed();

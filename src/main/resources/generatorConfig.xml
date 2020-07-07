@@ -1,59 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE generatorConfiguration
-        PUBLIC " -//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 <generatorConfiguration>
-    <classPathEntry
-            location="C:\Users\Administrator\.m2\mysql\mysql-connector-java\5.1.42\mysql-connector-java-5.1.42.jar"/>
-    <context id="my" targetRuntime="MyBatis3">
-        <property name="javaFileEncoding" value="UTF-8"/>
-        <!-- 格式化Java代码 -->
-        <property name="javaFormatter" value="org.mybatis.generator.api.dom.DefaultJavaFormatter"/>
+    <classPathEntry  location="/Users/huangzhixin/.m2/repository/mysql/mysql-connector-java/8.0.20/mysql-connector-java-8.0.20.jar"/>
+    <!-- context 是逆向工程的主要配置信息 -->
+    <!-- id：起个名字 -->
+    <!-- targetRuntime：设置生成的文件适用于那个 mybatis 版本 -->
+    <context id="default" targetRuntime="MyBatis3">
+        <plugin type="org.mybatis.generator.plugins.LombokPlugin"/>
+        <plugin type="org.mybatis.generator.plugins.CommentPlugin"/>
+        <!--optional,指在创建class时，对注释进行控制-->
         <commentGenerator>
-            <property name="suppressDate" value="false"/>
+            <property name="suppressDate" value="true"/>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
             <property name="suppressAllComments" value="true"/>
         </commentGenerator>
-        　　　　 <!-- mysql数据库连接 -->　
-        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://127.0.0.1:3306/fire" userId="root"
+        <!--jdbc的数据库连接 wg_insert 为数据库名字-->
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/fire?useUnicode=true&amp;characeterEncoding=utf-8&amp;serverTimezone=UTC"
+                        userId="root"
                         password="123456"/>
+        <!--非必须，类型处理器，在数据库类型和java类型之间的转换控制-->
         <javaTypeResolver>
-            <!--
-                true:使用BigDecimal对应DECIMAL和 NUMERIC数据类型
-                false:默认
-                scale>0;length>18:使用BigDecimal
-                scale=0;length[10,18]:使用Long
-                scale=0;length[5,9]:使用Integer
-                scale=0;length<5:使用Short
-            -->
+            <!-- 默认情况下数据库中的 decimal，bigInt 在 Java 对应是 sql 下的 BigDecimal 类 -->
+            <!-- 不是 double 和 long 类型 -->
+            <!-- 使用常用的基本类型代替 sql 包下的引用类型 -->
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
-
-        　　　　　<!-- 生成model实体类文件位置 -->
-        <javaModelGenerator targetPackage="com.dmsoft.fire"
-                            targetProject="C:\Users\Administrator\Desktop\fire\src\main\java">
-            <property name="enableSubPackages" value="true"/>
+        <!-- targetPackage：生成的实体类所在的包 -->
+        <!-- targetProject：生成的实体类所在的硬盘位置 -->
+        <javaModelGenerator targetPackage="com.dmsoft.fire.entity"
+                            targetProject="/Users/huangzhixin/Desktop/fire/src/main/java">
+            <!-- 是否允许子包 -->
+            <property name="enableSubPackages" value="false"/>
+            <!-- 是否对modal添加构造函数 -->
+            <property name="constructorBased" value="false"/>
+            <!-- 是否清理从数据库中查询出的字符串左右两边的空白字符 -->
             <property name="trimStrings" value="true"/>
-            <property name="entity" value="true"/>
+            <!-- 建立modal对象是否不可改变 即生成的modal对象不会有setter方法，只有构造方法 -->
+            <property name="immutable" value="false"/>
         </javaModelGenerator>
-
-        　　　　　<!-- 生成mapper.xml配置文件位置 -->
-        <sqlMapGenerator targetPackage="com.dmsoft.fire"
-                         targetProject="C:\Users\Administrator\Desktop\fire\src\main\java">
-            <property name="mapper" value="false"/>
+        <!-- targetPackage 和 targetProject：生成的 mapper 文件的包和位置 -->
+        <sqlMapGenerator targetPackage="mapper"
+                         targetProject="/Users/huangzhixin/Desktop/fire/src/main/resources">
+            <!-- 针对数据库的一个配置，是否把 schema 作为字包名 -->
+            <property name="enableSubPackages" value="false"/>
         </sqlMapGenerator>
-
-        <!-- 生成mapper接口文件位置 -->
-        <javaClientGenerator targetPackage="com.ssmgen.demo.mapper"
-                             targetProject="/Users/yehaixiao/asiainfo/ssm-demo/src/main/java" type="XMLMAPPER">
+        <!-- targetPackage 和 targetProject：生成的 interface 文件的包和位置 -->
+        <javaClientGenerator type="XMLMAPPER"
+                             targetPackage="com.dmsoft.fire.mapper" targetProject="/Users/huangzhixin/Desktop/fire/src/main/java">
+            <!-- 针对 oracle 数据库的一个配置，是否把 schema 作为字包名 -->
             <property name="enableSubPackages" value="false"/>
         </javaClientGenerator>
-        　　　　 <!-- 需要生成的实体类对应的表名，多个实体类复制多份该配置即可 -->
-        <table tableName="t_user" domainObjectName="entity.User"
+        <table tableName="commodity" domainObjectName="Commodity"
                enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
-            <property name="useActualColumnNames" value="false"/>
+        </table>
+        <table tableName="sysLog" domainObjectName="SysLog"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
         </table>
     </context>
 </generatorConfiguration>
