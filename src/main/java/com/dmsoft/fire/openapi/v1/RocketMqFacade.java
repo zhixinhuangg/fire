@@ -22,7 +22,7 @@ public class RocketMqFacade {
     private MqProducer mqProducer;
 
     @PostMapping("/push")
-    @ApiOperation("rocketMq测试")
+    @ApiOperation(httpMethod = "POST", value = "rocketMq测试")
     public void push() {
         mqProducer.sendMessage("Hello RocketMQ ", "TopicTest",
                 "TagTest", "Key");
